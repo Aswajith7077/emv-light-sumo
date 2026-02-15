@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!-- generated on 2026-02-15T00:49:14.795613+05:30 by Eclipse SUMO netedit 1.26.0
+-->
+
+<routes xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://sumo.dlr.de/xsd/routes_file.xsd">
+    <!-- VTypes -->
+    <vType id="DEFAULT_VEHTYPE" vClass="truck"/>
+    <!-- Vehicles, persons and containers (sorted by depart) -->
+    <flow id="f_0" begin="0.00" end="3600.00" perHour="1089.92" color="0,128,0" fromJunction="J110" toJunction="clusterJ68_J75_J76"/>
+    <person id="p_0" depart="0.00">
+        <walk edges="E52 E39 E40 E25 -E8 E7 E11 E20 -E8 E22"/>
+    </person>
+</routes>
