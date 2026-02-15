@@ -41,7 +41,7 @@ class Traffic:
         traci.start(self.build_sumo_command())
 
         self.tls_ids = sorted(traci.trafficlight.getIDList())
-        self.tls_id = self.tls_ids[0]
+        self.tls_id = self.tls_ids[9]
         self.all_detectors = traci.inductionloop.getIDList()
         self.__init_tls_detectors()
 
