@@ -1,24 +1,8 @@
-import traci
-import sys
-import os
-import time
+from src.qlearning_single_agent.train import train as train_q_learning
+from src.dqn.train import train as train_dqn
 
-SUMO_CFG = "sumo_test/test.sumocfg"
-USE_GUI = True
-
-if USE_GUI:
-    sumoBinary = "sumo-gui"
-else:
-    sumoBinary = "sumo"
-
-sumoCmd = [sumoBinary, "-c", SUMO_CFG, "--start"]
-
-traci.start(sumoCmd)
+# results_ql = train_q_learning()
+results_dqn = train_dqn()
 
 
 
-print("Simulation started")
-
-# Get all traffic lights
-tls_ids = traci.trafficlight.getIDList()
-print("Traffic Lights:", tls_ids)
