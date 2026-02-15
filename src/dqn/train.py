@@ -8,6 +8,9 @@ max_steps = 5000
 log_interval = 100
 
 
+version = 1
+
+
 def train():
     agent = DQNAgent(
         state_size = 1,
@@ -99,6 +102,8 @@ def train():
             "step_queues": all_queues,
         }
     )
+
+    agent.save(f"models/dqn_v{version}.pth")
 
 
 # def train(num_episodes=5, max_steps=5000, log_interval=100):

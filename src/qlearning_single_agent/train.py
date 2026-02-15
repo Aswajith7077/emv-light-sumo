@@ -7,6 +7,7 @@ num_episodes = 5
 max_steps = 5000
 log_interval = 100
 
+version = 1
 
 def train():
     agent = QLearningAgent(
@@ -87,6 +88,7 @@ def train():
         print(f"    Steps: {step + 1}")
 
     env.close()
+    agent.save(f"models/ql_v{version}.pth")
 
     print(
         {
