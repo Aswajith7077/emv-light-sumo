@@ -86,25 +86,12 @@ class DQNAgent:
             q_values = self._predict(self.model, state_array)
             return int(np.argmax(q_values))
 
-    def __decompose_batch(self,batch):
-        states = []
-        actions = []
-        rewards = []
-        next_states = []
-        dones = []
-
-        for s,a,r,ns,d in batch:
-            states.append(s)
-            actions.append(a)
-            rewards.append(r)
-            next_states.append(ns)
-            dones.append(d)
-
-        states = np.array(states, dtype=np.float32)
-        actions = np.array(actions)
-        rewards = np.array(rewards, dtype=np.float32)
-        next_states = np.array(next_states, dtype=np.float32)
-        dones = np.array(dones, dtype=np.float32)
+    def __decompose_batch(self, batch):
+        states = np.array([e[0] for e in batch], dtype=np.float32)
+        actions = np.array([e[1] for e in batch])
+        rewards = np.array([e[2] for e in batch], dtype=np.float32)
+        next_states = np.array([e[3] for e in batch], dtype=np.float32)
+        dones = np.array([e[4] for e in batch], dtype=np.float32)
 
         return states, actions, rewards, next_states, dones
 
@@ -121,7 +108,6 @@ class DQNAgent:
         batch = random.sample(self.replay_buffer, self.batch_size)
         states, actions, rewards, next_states, dones = self.__decompose_batch(batch)
 
-
         self._train_batch(states, actions, rewards, next_states, dones)
 
         # Decaying of epsilon (Significance of Exploration decreases as increase in trials)
@@ -131,7 +117,6 @@ class DQNAgent:
         # Sync the network periodically, until that period, the network outputs a constant y value.
         if self.training_steps % self.target_update_freq == 0:
             self._sync_target_network()
-
 
     def _train_batch(self, states, actions, rewards, next_states, dones):
 

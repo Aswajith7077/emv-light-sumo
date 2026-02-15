@@ -10,6 +10,7 @@ log_interval = 100
 
 def train():
     agent = DQNAgent(
+        state_size = 1,
         num_actions=2,
         alpha=0.001,
         gamma=0.95,
