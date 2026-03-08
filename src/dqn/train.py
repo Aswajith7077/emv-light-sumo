@@ -1,7 +1,7 @@
 import numpy as np
-from .agent import DQNAgent
-from ..dynamic_env import Traffic
 
+from ..dynamic_env import Traffic
+from .agent import DQNAgent
 
 num_episodes = 5
 max_steps = 5000

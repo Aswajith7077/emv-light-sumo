@@ -233,3 +233,30 @@ The Critic's value estimate replaces the noisy Monte Carlo return, dramatically 
 | `n_rbf` | 5 | RBF centers per dimension (paper-tuned) |
 | `epsilon_start` | 0.9 | Initial exploration rate |
 | `epsilon_decay` | 0.9991 | Per-step decay (~0.9→0.1 over 30,000 steps) |
+
+Linting
+
+```bash
+# 1. Auto-fix import sorting (already installed with pylint)
+isort src/ main.py
+
+# 2. Auto-fix style/formatting issues (PEP8)
+pip install autopep8
+autopep8 --in-place --recursive src/ main.py
+
+# 3. Auto-fix + format everything (more aggressive, opinionated)
+pip install black
+black src/ main.py
+
+# 4. Remove unused imports automatically
+pip install autoflake
+autoflake --in-place --remove-unused-variables --remove-all-unused-imports -r src/ main.py
+
+```
+
+
+Pylint test
+
+```bash
+pylint src/ main.py --output-format=text
+```

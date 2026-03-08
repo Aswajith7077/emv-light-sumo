@@ -11,9 +11,9 @@ Usage:
 """
 
 import numpy as np
-from .env import MultiAgentTraffic
-from .agent import MultiAgentActorCritic
 
+from .agent import MultiAgentActorCritic
+from .env import MultiAgentTraffic
 
 # ── Hyper-parameters ──────────────────────────────────────────────────────────
 
@@ -132,9 +132,7 @@ def train():
         phase_label = (
             "explore-high"
             if episode < PHASE_BOUNDARIES[0]
-            else "explore-low"
-            if episode < PHASE_BOUNDARIES[1]
-            else "exploit"
+            else "explore-low" if episode < PHASE_BOUNDARIES[1] else "exploit"
         )
 
         stats = manager.get_stats()

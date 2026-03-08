@@ -1,8 +1,8 @@
 import os
 import sys
+
 import numpy as np
 import traci
-
 
 if "SUMO_HOME" not in os.environ:
     sys.exit("Environment variable SUMO_HOME not declared")

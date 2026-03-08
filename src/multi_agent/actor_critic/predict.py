@@ -15,9 +15,9 @@ Usage:
 """
 
 import numpy as np
-from .env import MultiAgentTraffic
-from .agent import MultiAgentActorCritic
 
+from .agent import MultiAgentActorCritic
+from .env import MultiAgentTraffic
 
 # ── Defaults ──────────────────────────────────────────────────────────────────
 
@@ -160,9 +160,7 @@ def predict(
             # Logging
             if (step + 1) % LOG_INTERVAL == 0:
                 avg_queue = np.mean(ep_queues[-LOG_INTERVAL:])
-                avg_reward = np.mean(
-                    [sum(rewards.values())] * 1  # current step
-                )
+                avg_reward = np.mean([sum(rewards.values())] * 1)  # current step
                 # Per-agent phase snapshot
                 phases = {tid: infos[tid]["phase"] for tid in env.tls_ids}
                 print(

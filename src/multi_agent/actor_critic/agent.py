@@ -11,9 +11,10 @@ and eligibility traces, and learns from its own local reward signal.
 
 import os
 import random
-import numpy as np
-from ...actor_critic.feature_maps import RBFFeatureMap, TileCodingFeatureMap
 
+import numpy as np
+
+from ...actor_critic.feature_maps import RBFFeatureMap, TileCodingFeatureMap
 
 # ═══════════════════════════════════════════════════════════════════════════════
 #  Single-Intersection Actor-Critic Agent

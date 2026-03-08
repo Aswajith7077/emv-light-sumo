@@ -14,9 +14,9 @@ Usage:
 """
 
 import numpy as np
+
 from ..dynamic_env import Traffic
 from .agent import ActorCriticAgent
-
 
 # ── Hyper-parameters ──────────────────────────────────────────────────────────
 
@@ -128,9 +128,7 @@ def train():
         phase_label = (
             "explore-high"
             if episode < PHASE_BOUNDARIES[0]
-            else "explore-low"
-            if episode < PHASE_BOUNDARIES[1]
-            else "exploit"
+            else "explore-low" if episode < PHASE_BOUNDARIES[1] else "exploit"
         )
         print(
             f"\n  --- Episode {episode + 1}/{NUM_EPISODES}  [{phase_label}]  ε={agent.epsilon:.4f} ---"

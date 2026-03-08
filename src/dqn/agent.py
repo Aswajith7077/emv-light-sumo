@@ -1,14 +1,14 @@
+import torch.nn as nn
+import torch
+from collections import deque
 import os
 import random
+
 import numpy as np
 
 # Workaround: PyTorch's _dynamo module crashes on Python 3.14+
 # Disable it before importing torch to avoid the tokenize/inspect error.
 os.environ.setdefault("TORCHDYNAMO_DISABLE", "1")
-
-import torch
-import torch.nn as nn
-from collections import deque
 
 
 class QNetwork(nn.Module):

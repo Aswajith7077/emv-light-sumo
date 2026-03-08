@@ -11,9 +11,9 @@ Usage:
 """
 
 import numpy as np
+
 from ..dynamic_env import Traffic
 from .agent import DQNAgent
-
 
 # ── Defaults ──────────────────────────────────────────────────────────────────
 

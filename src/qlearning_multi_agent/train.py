@@ -1,7 +1,7 @@
-from ..dynamic_env import Traffic
-from .agent import QLearningAgent
 import numpy as np
 
+from ..dynamic_env import Traffic
+from .agent import QLearningAgent
 
 num_episodes = 5
 max_steps = 5000

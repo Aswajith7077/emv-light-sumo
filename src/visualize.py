@@ -5,6 +5,7 @@ Generates and saves matplotlib charts to the test output directory.
 """
 
 import os
+
 import numpy as np
 
 

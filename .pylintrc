@@ -1,0 +1,32 @@
+[MASTER]
+# Ignore scratch/probe scripts
+ignore=tmp
+
+# Ignore files matching these patterns
+ignore-patterns=^\.#
+
+[MESSAGES CONTROL]
+# Disable import errors (traci/SUMO not available outside simulation)
+# Disable missing-docstring warnings (C0114=module, C0115=class, C0116=function)
+disable=
+    import-error,
+    C0114,
+    C0115,
+    C0116,
+    R0903,
+    W0212
+
+[FORMAT]
+# Allow longer lines common in ML/RL code
+max-line-length=120
+
+[DESIGN]
+# Relax complexity limits for RL agent classes
+max-args=15
+max-attributes=20
+max-locals=25
+
+[REPORTS]
+# Show a score at the end
+score=yes
+fail-under=7.0

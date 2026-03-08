@@ -1,9 +1,9 @@
 import os
 import sys
-import numpy as np
-import traci
 from collections import defaultdict
 
+import numpy as np
+import traci
 
 if "SUMO_HOME" not in os.environ:
     sys.exit("Environment variable SUMO_HOME not declared")
@@ -12,6 +12,7 @@ tools = os.path.join(os.environ["SUMO_HOME"], "tools")
 
 if tools not in sys.path:
     sys.path.append(tools)
+
 
 class Traffic:
 
@@ -130,7 +131,6 @@ class Traffic:
             traci.trafficlight.setPhase(tls_id, next_phase)
 
             self.last_switch_step[tls_id] = self.step_count
-
 
     def reward(self, state):
         queue_lengths = state[:-1]
