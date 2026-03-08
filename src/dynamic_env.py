@@ -2,7 +2,6 @@ import os
 import sys
 import numpy as np
 import traci
-from collections import defaultdict
 
 
 if "SUMO_HOME" not in os.environ:
@@ -13,10 +12,9 @@ tools = os.path.join(os.environ["SUMO_HOME"], "tools")
 if tools not in sys.path:
     sys.path.append(tools)
 
-class Traffic:
 
+class Traffic:
     NUM_ACTIONS = 2
-    STATE_SIZE = 9
 
     def __init__(
         self,
@@ -41,28 +39,18 @@ class Traffic:
         traci.start(self.build_sumo_command())
 
         self.tls_ids = sorted(traci.trafficlight.getIDList())
-        self.tls_id = self.tls_ids[9]
-        self.all_detectors = traci.inductionloop.getIDList()
-        self.__init_tls_detectors()
+        # Index 2 = 'clusterJ104_J105_J107_J109_#2more' — busiest junction
+        self.tls_id = self.tls_ids[2]
+        self._controlled_lanes = sorted(
+            set(traci.trafficlight.getControlledLanes(self.tls_id))
+        )
+        # STATE_SIZE: one slot per controlled lane + 1 for current phase
+        Traffic.STATE_SIZE = len(self._controlled_lanes) + 1
 
         self.step_count = 0
-        self.last_switch_step = {
-            tls_id: -self.min_green_steps for tls_id in self.tls_ids
-        }
+        self.last_switch_step = -self.min_green_steps
         self.prev_total_waiting = 0
         self.prev_vehicle_count = 0
-
-    def __init_tls_detectors(self):
-
-        self.tls_detectors = defaultdict(list)
-
-        for tls in self.tls_ids:
-            lanes = list(set(traci.trafficlight.getControlledLanes(tls)))
-
-            for det in self.all_detectors:
-                lane = traci.inductionloop.getLaneID(det)
-                if lane in lanes:
-                    self.tls_detectors[tls].append(det)
 
     def build_sumo_command(self):
         binary = "sumo-gui" if self.use_gui else "sumo"
@@ -74,6 +62,9 @@ class Traffic:
             str(self.step_length),
             "--start",
             "--quit-on-end",
+            "--no-step-log",  # suppress "Step #N" interleaved output
+            "--verbose",
+            "false",
         ]
         if self.use_gui:
             cmd += ["--delay", str(self.delay)]
@@ -90,15 +81,18 @@ class Traffic:
         self.last_switch_step = -self.min_green_steps
         self.prev_total_waiting = 0
         self.prev_vehicle_count = 0
+        self._controlled_lanes = sorted(
+            set(traci.trafficlight.getControlledLanes(self.tls_id))
+        )
 
         return self.get_state()
 
     def get_state(self):
-
+        """State: vehicle count per controlled lane + current phase index."""
         queue_lengths = []
-        for det_id in self.tls_detectors[self.tls_id]:
+        for lane_id in self._controlled_lanes:
             try:
-                q = traci.lanearea.getLastStepVehicleNumber(det_id)
+                q = traci.lane.getLastStepVehicleNumber(lane_id)
             except traci.exceptions.TraCIException:
                 q = 0
             queue_lengths.append(q)
@@ -119,7 +113,6 @@ class Traffic:
                 next_phase = (current + 1) % num_phases
                 traci.trafficlight.setPhase(self.tls_id, next_phase)
                 self.last_switch_step = self.step_count
-
 
     def reward(self, state):
         queue_lengths = state[:-1]

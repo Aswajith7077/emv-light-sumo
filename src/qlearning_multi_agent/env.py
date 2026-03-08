@@ -137,7 +137,7 @@ class Traffic:
 
         self.prev_total_waiting = total_waiting
 
-        reward = queue_penalty + waiting_delta + total_waiting
+        reward = queue_penalty + waiting_delta + throughput_bonus
         return reward
 
     def step(self, action):

@@ -1,5 +1,5 @@
 import numpy as np
-from src.dqn.agent import DQNAgent
+from .agent import DQNAgent
 from ..dynamic_env import Traffic
 
 
@@ -12,9 +12,22 @@ version = 1
 
 
 def train():
+    # Start env first so we can probe the real state dimensionality.
+    # The TLS controlled by dynamic_env may have fewer detectors than
+    # the hardcoded STATE_SIZE=9 implies.
+    env = Traffic(
+        use_gui=True,
+        step_length=0.1,
+        delay=100,
+        min_green_steps=50,
+        max_steps=max_steps,
+    )
+    sample_state = env.reset()
+    real_state_size = len(sample_state)
+
     agent = DQNAgent(
-        state_size = 1,
-        num_actions=2,
+        state_size=real_state_size,
+        num_actions=Traffic.NUM_ACTIONS,
         alpha=0.001,
         gamma=0.95,
         epsilon_start=1.0,
@@ -23,25 +36,21 @@ def train():
         batch_size=64,
         target_update_freq=500,
     )
-    env = Traffic(
-        use_gui=True,
-        step_length=0.1,
-        delay=100,
-        min_green_steps=50,
-        max_steps=5000,
-    )
 
     all_rewards = []
     all_queues = []
     all_episode_rewards = []
 
     print(f"\n{'=' * 70}")
-    print(f"  Training Agent: {agent.name}")
-    print(f"  Episodes: {num_episodes} | Max Steps/Episode: {max_steps}")
+    print(f"  Training Agent : {agent.name}")
+    print(f"  State Size     : {real_state_size}")
+    print(f"  Episodes       : {num_episodes}  |  Max Steps: {max_steps}")
     print(f"{'=' * 70}")
 
     for episode in range(num_episodes):
-        state = env.reset()
+        # Reuse the already-reset state for episode 0
+        state = sample_state if episode == 0 else env.reset()
+
         episode_reward = 0
         episode_queues = []
         step_rewards = []

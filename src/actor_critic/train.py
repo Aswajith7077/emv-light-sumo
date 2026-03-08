@@ -71,30 +71,38 @@ def _update_epsilon(agent: ActorCriticAgent, episode: int):
 def train():
     """Run Actor-Critic training on the SUMO traffic environment."""
 
+    # Create env first to probe the real state dimensionality
+    env = Traffic(
+        use_gui=True,
+        step_length=1.0,
+        delay=0,
+        min_green_steps=5,
+        max_steps=MAX_STEPS,
+    )
+    sample_state = env.reset()
+    real_state_size = len(sample_state)
+
+    # Derive state bounds: queue lanes get [0, 20], final slot (phase) gets [0, 9]
+    n_lanes = real_state_size - 1
+    state_low = [0] * n_lanes + [0]
+    state_high = [20] * n_lanes + [9]
+
     agent = ActorCriticAgent(
-        state_size=Traffic.STATE_SIZE,
+        state_size=real_state_size,
         num_actions=Traffic.NUM_ACTIONS,
         approx=APPROX,
         n_rbf=N_RBF,
         n_tilings=N_TILINGS,
         tiles_per_dim=TILES_PER_DIM,
-        state_low=STATE_LOW,
-        state_high=STATE_HIGH,
+        state_low=state_low,
+        state_high=state_high,
         alpha_critic=0.1,
         alpha_actor=0.1,
         gamma=0.95,
         lambda_=0.9,
         epsilon_start=0.9,
         epsilon_end=0.0,
-        epsilon_decay=0.9991,  # ~0.9→0.1 over 6*5000=30000 steps
-    )
-
-    env = Traffic(
-        use_gui=True,
-        step_length=0.1,
-        delay=100,
-        min_green_steps=50,
-        max_steps=MAX_STEPS,
+        epsilon_decay=0.9991,
     )
 
     all_rewards = []
@@ -103,17 +111,15 @@ def train():
 
     print(f"\n{'=' * 70}")
     print(f"  Training Agent : {agent.name}")
-    print(
-        f"  Approx Method  : {APPROX.upper()}  |  Feature size: {agent.feature_map.feature_size}"
-    )
+    print(f"  Approx Method  : {APPROX.upper()}  |  State size: {real_state_size}")
+    print(f"  Feature size   : {agent.feature_map.feature_size}")
     print(f"  Episodes       : {NUM_EPISODES}  |  Max steps/ep: {MAX_STEPS}")
     print(f"{'=' * 70}")
 
     for episode in range(NUM_EPISODES):
-        # Apply phase-based epsilon override before each episode
         _update_epsilon(agent, episode)
+        state = sample_state if episode == 0 else env.reset()
 
-        state = env.reset()
         episode_reward = 0.0
         episode_queues = []
         step_rewards = []

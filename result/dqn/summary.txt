@@ -1,0 +1,30 @@
+============================================================
+  Evaluation Summary
+============================================================
+
+  Agent            : DQN
+  Avg Total Reward : -227326.03
+  Avg Total Queue  : 45.51
+
+  Episodes         : 3
+------------------------------------------------------------
+
+  Episode 1:
+    total_reward        : -227326.03
+    avg_queue           : 45.51
+    switches            : 47
+    steps               : 5000
+
+  Episode 2:
+    total_reward        : -227326.03
+    avg_queue           : 45.51
+    switches            : 47
+    steps               : 5000
+
+  Episode 3:
+    total_reward        : -227326.03
+    avg_queue           : 45.51
+    switches            : 47
+    steps               : 5000
+
+============================================================

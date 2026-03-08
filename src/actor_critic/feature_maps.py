@@ -61,20 +61,22 @@ class RBFFeatureMap:
             else np.array(state_high, dtype=np.float64)
         )
 
-        # Build center grid using meshgrid over [0,1]^state_size
-        centers_per_dim = np.linspace(0.0, 1.0, n_rbf)  # shape (n_rbf,)
-        grids = np.meshgrid(*[centers_per_dim] * state_size, indexing="ij")
-        # Stack into (n_centers, state_size)
-        self._centers = np.column_stack([g.ravel() for g in grids])  # (n_rbf^d, d)
+        # Build RBF centers using random sampling instead of meshgrid.
+        # meshgrid creates n_rbf^state_size points which is intractable for
+        # large state spaces (e.g. 5^16 = 150 billion). Random sampling
+        # gives a fixed budget of n_rbf * state_size centers that scale linearly.
+        rng = np.random.default_rng(seed=42)
+        n_centers = max(n_rbf * state_size, 50)  # at least 50 centers
+        self._centers = rng.uniform(0.0, 1.0, size=(n_centers, state_size))
 
-        # Sigma
+        # Sigma: spread relative to expected inter-center distance
         if sigma is not None:
             self._sigma2 = sigma**2
         else:
             spread = 1.0 / (n_rbf - 1) if n_rbf > 1 else 0.5
             self._sigma2 = spread**2
 
-        self._n_centers = self._centers.shape[0]
+        self._n_centers = n_centers
         # +1 for bias
         self._feature_size = self._n_centers + 1
 

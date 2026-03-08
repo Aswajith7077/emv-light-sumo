@@ -1,5 +1,11 @@
+import os
 import random
 import numpy as np
+
+# Workaround: PyTorch's _dynamo module crashes on Python 3.14+
+# Disable it before importing torch to avoid the tokenize/inspect error.
+os.environ.setdefault("TORCHDYNAMO_DISABLE", "1")
+
 import torch
 import torch.nn as nn
 from collections import deque
@@ -152,6 +158,15 @@ class DQNAgent:
         print(f"  DQN model saved to {path}")
 
     def load(self, path):
-        self.model.load_state_dict(torch.load(path))
+        state_dict = torch.load(path, weights_only=True)
+        # Validate state_size matches the saved model
+        saved_in = state_dict["net.0.weight"].shape[1]
+        if saved_in != self.state_size:
+            raise RuntimeError(
+                f"Model checkpoint has state_size={saved_in} but agent was "
+                f"created with state_size={self.state_size}. "
+                f"Re-train with: python main.py train dqn"
+            )
+        self.model.load_state_dict(state_dict)
         self._sync_target_network()
         print(f"  DQN model loaded from {path}")
